@@ -1,0 +1,7 @@
+{
+  "name": "FinancialIntelligence",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
