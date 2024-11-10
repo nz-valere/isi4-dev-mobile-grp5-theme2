@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>New Transaction</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form (ngSubmit)="saveTransaction()">
+    <ion-item>
+      <ion-label>Type</ion-label>
+      <ion-select [(ngModel)]="transaction.type" name="type">
+        <ion-select-option value="income">Income</ion-select-option>
+        <ion-select-option value="expense">Expense</ion-select-option>
+        <ion-select-option value="loan">Loan</ion-select-option>
+        <ion-select-option value="credit">Credit</ion-select-option>
+        <ion-select-option value="savings">Savings</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>Label</ion-label>
+      <ion-input [(ngModel)]="transaction.label" name="label"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Amount</ion-label>
+      <ion-input type="number" [(ngModel)]="transaction.amount" name="amount"></ion-input>
+    </ion-item>
+    <ion-item *ngIf="transaction.type === 'loan' || transaction.type === 'credit'">
+      <ion-label>Contact</ion-label>
+      <ion-input [(ngModel)]="transaction.contact" name="contact"></ion-input>
+    </ion-item>
+    <ion-button expand="full" type="submit">Save Transaction</ion-button>
+  </form>
+</ion-content>
