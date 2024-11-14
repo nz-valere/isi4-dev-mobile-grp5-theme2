@@ -1,9 +1,8 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>login</ion-title>
-  </ion-toolbar>
+<ion-header>
+  
 </ion-header>
 
+<<<<<<< HEAD
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
@@ -15,4 +14,83 @@
     <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
     hello world
   </div>
+=======
+<ion-content class="login-background">
+  <div class="login-back">
+  <div class="login-container">
+    <h2>Welcome Back!</h2>
+    <form (ngSubmit)="onSubmit()">
+      <ion-item>
+        <ion-label position="floating">Email</ion-label>
+        <ion-input type="email" [(ngModel)]="email" name="email" required></ion-input>
+      </ion-item>
+      <ion-note *ngIf="email && !isEmailValid()" color="danger">
+        Please enter a valid email address.
+      </ion-note>
+      
+
+      <ion-item>
+        <ion-label position="floating">Password</ion-label>
+        <ion-input type="password" [(ngModel)]="password" name="password" required></ion-input>
+      </ion-item>
+
+      <ion-button expand="full" type="submit" [disabled]="!email || !password" class="login-button" a href="/signup">
+        Login
+      </ion-button>
+    </form>
+
+    <div class="register-link">
+      <p>Don't have an account? <a routerLink="/signup">Register here</a></p>
+    </div>
+  </div>
+</div>
+>>>>>>> 3c6b89c6c5b2a9fabb9252affd52e0f3d226e049
 </ion-content>
+
+
+<div style="display: hidden;">
+  
+<ion-header>
+ 
+</ion-header>
+
+
+<ion-header>
+  
+</ion-header>
+
+<ion-content class="signup-content">
+  <div class="login-back">
+  <div class="login-container">
+    <h2>Welcome Back!</h2>
+    <form (ngSubmit)="onSubmit()" #signupForm="ngForm">
+      <ion-item>
+        <ion-label position="floating">Email</ion-label>
+        <ion-input type="email" [(ngModel)]="email" name="email" required></ion-input>
+      </ion-item>
+  
+      <ion-item>
+        <ion-label position="floating">Password</ion-label>
+        <ion-input type="password" [(ngModel)]="password" name="password" required></ion-input>
+      </ion-item>
+  
+      <ion-item>
+        <ion-label position="floating">Confirm Password</ion-label>
+        <ion-input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" required></ion-input>
+      </ion-item>
+  
+      <ion-button expand="full" type="submit" [disabled]="!signupForm.form.valid" >Sign Up</ion-button>
+  
+      <div class="register-link">
+        <p>Already have an account? <a routerLink="/login">Log In</a></p>
+      </div>
+    </form>
+  
+
+   
+  </div>
+</div>
+</ion-content>
+
+
+</div>

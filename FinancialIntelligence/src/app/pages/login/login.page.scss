@@ -1,27 +1,76 @@
-#container {
+
+
+.login-back{
+
+    background: url(../../../assets/stacked-green-card-paper-abstract-backdrop.jpg);
+    background-size: cover;
+    /* background-position: bottom; */
+    height: 100vh;
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    padding: none;
+    margin: none;
+}
+    
+  h2 {
+    margin-bottom: 10px;
+  }
+  
+  .register-link {
+    margin-top: 20px;
     text-align: center;
-  
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
+    font-weight: 300;
   }
   
-  #container strong {
-    font-size: 20px;
-    line-height: 26px;
+  .login-container {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    // padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    // max-width: 600px;
+    // margin: auto;
+    margin-top: 10px; /* Adjust for spacing */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 70%;
+    // margin-top: none;
+    padding: none;
+    width: 500px;
+  }
+
+  h2 {
+    margin-bottom: 20px;
+    text-align: center;
   }
   
-  #container p {
-    font-size: 16px;
-    line-height: 22px;
-  
-    color: #8c8c8c;
-  
-    margin: 0;
+  .register-link {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .register-link a {
+    color: green; /* Ionic primary color */
   }
   
-  #container a {
-    text-decoration: none;
+  .login-button {
+    --background: green; /* Customize button color */
+    --color: white; /* Button text color */
   }
+  
+  .register-link p {
+    color: #666;
+  }
+  
+  ion-label {
+    
+    font-size: 2px; /* Change label font size */
+    font-weight: 100; /* Make label bold */
+  }
+  ion-input{
+    width: 90%;
+  }
+  
+
