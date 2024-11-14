@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
 import { TransactionService } from 'src/app/services/transaction/transaction.service';
 import Chart from 'chart.js/auto';
 
@@ -7,12 +7,12 @@ import Chart from 'chart.js/auto';
   templateUrl: './reports.page.html',
   styleUrls: ['./reports.page.scss'],
 })
-export class ReportsPage implements OnInit {
-  @ViewChild('barChart') barChart: ElementRef;
-  
+export class ReportsPage implements AfterViewInit {
+  @ViewChild('barChart') barChart!: ElementRef;
+
   constructor(private transactionService: TransactionService) { }
 
-  ngOnInit() {
+  ngAfterViewInit() {
     this.createBarChart();
   }
 
@@ -34,5 +34,4 @@ export class ReportsPage implements OnInit {
       },
     });
   }
-
 }
