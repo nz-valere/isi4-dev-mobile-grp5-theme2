@@ -14,6 +14,17 @@
     <!-- Weekly, monthly, yearly summaries here -->
     <ion-button [routerLink]="['/transaction']">Operate Transaction</ion-button>
   </div>
+  <ion-list>
+    <ion-item *ngFor="let transaction of transactions">
+      <ion-label>
+        <h2>{{ transaction.label }}</h2>
+        <p>{{ transaction.type }} - {{ transaction.amount | currency }}</p>
+      </ion-label>
+      <ion-button fill="clear" [routerLink]="['/transaction', transaction.id]">
+        Edit
+      </ion-button>
+    </ion-item>
+  </ion-list>
   <div id="container">
     <strong>Ready to create an app?</strong>
     <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>

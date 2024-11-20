@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>New Transaction</ion-title>
+    <ion-title>{{ isEditMode ? 'Edit Transaction' : 'Add Transaction' }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -41,7 +41,12 @@
       <ion-label>Contact</ion-label>
       <ion-input [(ngModel)]="transaction.contact" name="contact"></ion-input>
     </ion-item>
-    <ion-button expand="block" type="submit" [disabled]="transactionForm.invalid">Save Transaction</ion-button>
+    <ion-button expand="block" type="submit" [disabled]="transactionForm.invalid">Save Transaction
+      {{ isEditMode ? 'Update' : 'Save' }}
+    </ion-button>
+    <ion-button *ngIf="isEditMode" expand="block" color="danger" (click)="deleteTransaction()">
+      Delete
+    </ion-button>
   </form>
   <div id="container">
     <strong>Ready to create an app?</strong>

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TransactionService } from '../../services/transaction/transaction.service';
 import { RecommendationService } from '../../services/recommendation/recommendation.service';
+import { Transaction } from 'src/app/models/transaction.model';
 
 @Component({
   selector: 'app-home',
@@ -9,6 +10,8 @@ import { RecommendationService } from '../../services/recommendation/recommendat
 })
 export class HomePage implements OnInit {
 
+  transactions: Transaction[] = [];
+  
   totalIncome = 0;
   totalExpenses = 0;
   averageExpenses = 0;
@@ -20,6 +23,7 @@ export class HomePage implements OnInit {
   ) {}
 
   async ngOnInit() {
+    this.transactions = await this.transactionService.getAllTransactions();
     await this.transactionService.init();
     this.fetchSummary();
 

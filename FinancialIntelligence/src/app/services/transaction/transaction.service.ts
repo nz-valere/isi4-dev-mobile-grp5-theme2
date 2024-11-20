@@ -65,6 +65,18 @@ export class TransactionService extends Dexie {
     return this.transactions.where('type').equals(type).toArray();
   }
 
+  async getTransactionById(id: number): Promise<Transaction | undefined> {
+    return this.transactions.get(id);
+  }
+  
+  async updateTransaction(transaction: Transaction): Promise<void> {
+    await this.transactions.update(transaction.id!, transaction);
+  }
+  
+  async deleteTransaction(id: number): Promise<void> {
+    await this.transactions.delete(id);
+  }
+  
   // Calculate the total amount for transactions of a specific type
   async calculateTotal(type: string): Promise<number> {
     const transactions = await this.getTransactionsByType(type);

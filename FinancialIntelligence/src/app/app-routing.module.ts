@@ -23,6 +23,10 @@ const routes: Routes = [
     path: 'login',
     loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
   },
+  {
+    path: 'transaction/:id', // Use ':id' to differentiate between add (id = 'new') and edit modes
+    loadChildren: () => import('./pages/transaction/transaction.module').then(m => m.TransactionPageModule),
+  },
 ];
 
 
