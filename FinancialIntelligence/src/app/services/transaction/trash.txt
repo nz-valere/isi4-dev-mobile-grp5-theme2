@@ -1,0 +1,68 @@
+async addTransaction(transaction: Transaction) {
+    transaction.id = this.generateId();
+    this.transactions.push(transaction);
+
+    await this.saveTransactionsToStorage();
+  }
+
+  private async saveTransactionsToStorage() {
+    await this._storage?.set('transactions', this.transactions);
+    // console.log('Transaction added:', this.transactions);
+  }
+
+  async getTransactions(): Promise<Transaction[]> {
+    const transactions = await this._storage?.get('transactions');
+    console.log(transactions);
+    
+    this.transactions = transactions || [];
+    return this.transactions;
+  }
+
+  async removeTransaction(id: string) {
+    this.transactions = this.transactions.filter(transaction => transaction.id !== id);
+    await this.saveTransactionsToStorage();
+    console.log(`Transaction with ID ${id} removed`);
+  }
+
+
+  calculateTotal(type: 'income' | 'expense'): Promise<number> {
+    if (!this._storage) {
+      console.error('Storage is not initialized');
+      return Promise.resolve(0); // Return 0 if storage is not initialized
+    }
+  
+    return this._storage.get('transactions').then((transactions: Transaction[] | null) => {
+      transactions = transactions || []; // Default to an empty array if null
+      return transactions
+        .filter((t: Transaction) => t.type === type)
+        .reduce((total: number, t: Transaction) => total + t.amount, 0);
+    }).catch((error) => {
+      console.error('Error retrieving transactions:', error);
+      return 0; // Return 0 in case of an error
+    });
+  }
+  
+
+
+  calculateMonthlyAverage(type: 'income' | 'expense'): number {
+    const filteredTransactions = this.transactions.filter((t) => t.type === type);
+    // Calculate monthly average here based on filteredTransactions
+    return 0; // placeholder
+  }
+
+  private generateId(): string {
+    return Math.random().toString(36).substr(2, 9);
+  }
+
+  getDailyExpenses(): { [day: string]: number } {
+    const dailyExpenses: { [day: string]: number } = {};
+  
+    this.transactions
+      .filter((t) => t.type === 'expense')
+      .forEach((transaction) => {
+        const day = transaction.date.toISOString().split('T')[0];
+        dailyExpenses[day] = (dailyExpenses[day] || 0) + transaction.amount;
+      });
+  
+    return dailyExpenses;
+  }

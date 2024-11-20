@@ -1,5 +1,5 @@
 export interface Transaction {
-    id: string;
+    id?: number;
     type: 'income' | 'expense' | 'loan' | 'credit' | 'savings';
     label: string;
     amount: number;

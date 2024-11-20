@@ -19,16 +19,18 @@ export class HomePage implements OnInit {
     private recommendationService: RecommendationService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this.transactionService.init();
     this.fetchSummary();
+
   }
 
   fetchSummary() {
-    // Fetch total income, expenses, and calculate averages and recommendations
-    this.totalIncome = this.transactionService.calculateTotal('income');
-    this.totalExpenses = this.transactionService.calculateTotal('expense');
-    this.averageExpenses = this.transactionService.calculateMonthlyAverage('expense');
-    // this.recommendation = this.recommendationService.getRecommendation(this.totalExpenses);
+      this.transactionService.init().then(() => {
+        this.transactionService.calculateTotal('income').then(res => this.totalIncome = res);
+        this.transactionService.calculateTotal('expense').then(res => this.totalExpenses = res);
+        this.transactionService.calculateMonthlyAverage('expense').then(res => this.averageExpenses = res);
+        this.recommendation = this.recommendationService.getMonthlyRecommendation(this.totalExpenses);
+      })
   }
-
 }
