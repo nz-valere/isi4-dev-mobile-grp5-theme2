@@ -97,6 +97,37 @@ export class TransactionService extends Dexie {
     return monthlyTransactions.length > 0 ? total / monthlyTransactions.length : 0;
   }
 
+  async getWeeklyData(): Promise<{ week: number; amount: number }[]> {
+    const transactions = await this.getAllTransactions();
+    const weeklyData: { [key: number]: number } = {};
+  
+    transactions.forEach(t => {
+      const week = this.getWeekNumber(new Date(t.date));
+      weeklyData[week] = (weeklyData[week] || 0) + t.amount;
+    });
+  
+    return Object.entries(weeklyData).map(([week, amount]) => ({ week: parseInt(week), amount }));
+  }
+  
+  async getDailyData(): Promise<{ hour: string; amount: number }[]> {
+    const transactions = await this.getAllTransactions();
+    const dailyData: { [key: string]: number } = {};
+  
+    transactions.forEach(t => {
+      const hour = new Date(t.date).getHours();
+      const hourLabel = `${hour}:00`;
+      dailyData[hourLabel] = (dailyData[hourLabel] || 0) + t.amount;
+    });
+  
+    return Object.entries(dailyData).map(([hour, amount]) => ({ hour, amount }));
+  }
+  
+  private getWeekNumber(date: Date): number {
+    const oneJan = new Date(date.getFullYear(), 0, 1);
+    const numberOfDays = Math.floor((date.getTime() - oneJan.getTime()) / (24 * 60 * 60 * 1000));
+    return Math.ceil((numberOfDays + oneJan.getDay() + 1) / 7);
+  }
+  
 
 }
 

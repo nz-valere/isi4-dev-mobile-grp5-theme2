@@ -1,19 +1,39 @@
-import { Component, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, AfterViewInit, ViewChild, OnInit } from '@angular/core';
 import { TransactionService } from 'src/app/services/transaction/transaction.service';
 import Chart from 'chart.js/auto';
+import { GraphComponent } from 'src/app/component/graph/graph.component';
 
 @Component({
   selector: 'app-reports',
   templateUrl: './reports.page.html',
   styleUrls: ['./reports.page.scss'],
 })
-export class ReportsPage implements AfterViewInit {
+export class ReportsPage implements OnInit {
+
+  weeklyData: number[] = [];
+  weeklyLabels: string[] = [];
+  dailyData: number[] = [];
+  dailyLabels: string[] = [];
+
   @ViewChild('barChart') barChart!: ElementRef;
 
   constructor(private transactionService: TransactionService) { }
 
-  ngAfterViewInit() {
-    this.createBarChart();
+  async ngOnInit() {
+    await this.loadWeeklyData();
+    await this.loadDailyData();
+  }
+
+  async loadWeeklyData() {
+    const data = await this.transactionService.getWeeklyData();
+    this.weeklyData = data.map(d => d.amount);
+    this.weeklyLabels = data.map(d => `Week ${d.week}`);
+  }
+
+  async loadDailyData() {
+    const data = await this.transactionService.getDailyData();
+    this.dailyData = data.map(d => d.amount);
+    this.dailyLabels = data.map(d => d.hour);
   }
 
   createBarChart() {

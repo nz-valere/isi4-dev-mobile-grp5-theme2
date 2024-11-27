@@ -16,15 +16,25 @@
     </ion-toolbar>
   </ion-header>
   
-  <ion-content>
-    <div>
-      <canvas #barChart></canvas>
-    </div>
-  </ion-content>
   
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-    hello world
-  </div>
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Weekly Overview</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <app-graph [chartData]="weeklyData" [chartLabels]="weeklyLabels" chartType="bar"></app-graph>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- <ion-card>
+      <ion-card-header>
+        <ion-card-title>Daily Overview</ion-card-title>
+      </ion-card-header>
+      <ion-card-content> -->
+        <!-- <app-graph [chartData]="dailyData" [chartLabels]="dailyLabels" chartType="line"></app-graph> -->
+        <!-- <app-graph [chartData]="[10, 20, 30]" [chartLabels]="['Jan', 'Feb', 'Mar']" chartType="bar"></app-graph>
+
+      </ion-card-content>
+    </ion-card> -->
+  
 </ion-content>
