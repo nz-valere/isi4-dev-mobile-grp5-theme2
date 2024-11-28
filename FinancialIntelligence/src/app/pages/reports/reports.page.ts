@@ -1,6 +1,13 @@
 import { Component, ElementRef, AfterViewInit, ViewChild, OnInit } from '@angular/core';
 import { TransactionService } from 'src/app/services/transaction/transaction.service';
-import Chart from 'chart.js/auto';
+import { Chart, CategoryScale,
+BarController,
+LinearScale,
+BarElement,
+Title,
+Tooltip,
+Legend } from 'chart.js/auto';
+
 import { GraphComponent } from 'src/app/component/graph/graph.component';
 
 @Component({
@@ -17,7 +24,9 @@ export class ReportsPage implements OnInit {
 
   @ViewChild('barChart') barChart!: ElementRef;
 
-  constructor(private transactionService: TransactionService) { }
+  constructor(private transactionService: TransactionService) {     
+    Chart.register(BarController, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+  }
 
   async ngOnInit() {
     await this.loadWeeklyData();

@@ -1,5 +1,11 @@
 import { Component, Input, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { Chart, ChartTypeRegistry, registerables } from 'chart.js';
+import { Chart, registerables, CategoryScale,
+  BarController,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend } from 'chart.js';
 
 Chart.register(...registerables);
 
@@ -16,24 +22,31 @@ export class GraphComponent implements OnInit, AfterViewInit {
   @Input() chartType: 'line' | 'bar' | 'pie' = 'line'; // Chart type
 
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
+  chart: any;
 
-  private chart!: Chart;
-
-  constructor() {}
+  constructor() {
+    Chart.register(BarController, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+}
 
   ngOnInit() {}
-
+  
   ngAfterViewInit() {
-    this.initializeChart();
+    setTimeout(() => {
+      this.initializeChart();
+    });  
   }
 
   initializeChart() {
-    const canvas = this.chartCanvas?.nativeElement;
-    const ctx = canvas?.getContext('2d');
+    const ctx = this.chartCanvas.nativeElement.getContext('2d');
     
-    if (ctx) {
+    if (!ctx) {
+      console.error('Unable to get 2D context from chartCanvas.');
+      return
+    }
+    
       this.chart = new Chart(ctx, {
-        type: this.chartType as keyof ChartTypeRegistry, // Explicitly specify the type
+        
+        type: this.chartType, 
         data: {
           labels: this.chartLabels, // Ensure this is a string array
           datasets: [
@@ -55,9 +68,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
           },
         },
       });
-    } else {
-      console.error('Unable to get 2D context from chartCanvas.');
-    }
+    
   }
   
 }
