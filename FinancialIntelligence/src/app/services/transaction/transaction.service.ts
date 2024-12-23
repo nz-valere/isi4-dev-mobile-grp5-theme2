@@ -53,6 +53,7 @@ export class TransactionService extends Dexie {
       return null; // Return null to indicate failure
     }
   }
+
   
 
   // Fetch all transactions
