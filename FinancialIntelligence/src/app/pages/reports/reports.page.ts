@@ -41,8 +41,11 @@ export class ReportsPage implements OnInit {
 
   async loadDailyData() {
     const data = await this.transactionService.getDailyData();
+    
     this.dailyData = data.map(d => d.amount);
     this.dailyLabels = data.map(d => d.hour);
+    console.log(this.dailyData);
+    
   }
 
   createBarChart() {
