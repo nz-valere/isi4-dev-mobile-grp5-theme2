@@ -5,16 +5,17 @@
 </ion-header>
 
 <ion-content >
-        
+
   <app-graph 
-    [chartData]="dailyData" 
-    [chartLabels]="dailyLabels" 
-    chartType="bar">
-  </app-graph>
-  <app-graph
-    [chartData]="[10, 20, 30, 40]"
-    [chartLabels]="['Jan', 'Feb', 'Mar', 'Apr']"
+  *ngIf="chartData.length && chartLabels.length"
+    [chartData]="chartData" 
+    [chartLabels]="chartLabels"
     [chartType]="'bar'">
   </app-graph>
+
+  <button (click)="toggleMode()">
+    Switch to {{ mode === 'daily' ? 'Weekly' : 'Weekly' }} Data
+  </button>
+  
   
 </ion-content>

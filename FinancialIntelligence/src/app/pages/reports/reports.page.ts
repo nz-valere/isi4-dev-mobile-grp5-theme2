@@ -1,4 +1,4 @@
-import { Component, ElementRef, AfterViewInit, ViewChild, OnInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, OnInit, Input } from '@angular/core';
 import { TransactionService } from 'src/app/services/transaction/transaction.service';
 import { Chart, CategoryScale,
 BarController,
@@ -21,8 +21,11 @@ export class ReportsPage implements OnInit {
   weeklyLabels: string[] = [];
   dailyData: number[] = [];
   dailyLabels: string[] = [];
+  chartData: number[] = [];
+  chartLabels: string[] = [];
 
   @ViewChild('barChart') barChart!: ElementRef;
+  mode: 'daily' | 'weekly' = 'weekly'; // Track the current mode
 
   constructor(private transactionService: TransactionService) {     
     Chart.register(BarController, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -37,14 +40,31 @@ export class ReportsPage implements OnInit {
     const data = await this.transactionService.getWeeklyData();
     this.weeklyData = data.map(d => d.amount);
     this.weeklyLabels = data.map(d => `Week ${d.week}`);
+    if (this.mode === 'weekly') {
+      this.chartData = this.weeklyData;
+      this.chartLabels = this.weeklyLabels;
+    }
   }
 
   async loadDailyData() {
     const data = await this.transactionService.getDailyData();
-    
     this.dailyData = data.map(d => d.amount);
     this.dailyLabels = data.map(d => d.hour);
-    console.log(this.dailyData);
+    if (this.mode === 'daily') {
+      this.chartData = this.dailyData;
+      this.chartLabels = this.dailyLabels;
+    }
+  }
+
+  toggleMode() {
+    if (this.mode === 'daily') {
+      this.mode = 'weekly';
+      this.loadWeeklyData();
+    } else {
+      this.mode = 'daily';
+      this.loadDailyData();
+    }
+    console.log(this.mode);
     
   }
 
