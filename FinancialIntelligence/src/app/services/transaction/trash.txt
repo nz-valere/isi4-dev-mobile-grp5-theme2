@@ -1,68 +1,134 @@
-async addTransaction(transaction: Transaction) {
-    transaction.id = this.generateId();
-    this.transactions.push(transaction);
+import { Injectable } from '@angular/core';
+import { Transaction } from '../../models/transaction.model';
+import Dexie, { Table } from 'dexie';
 
-    await this.saveTransactionsToStorage();
-  }
+@Injectable({
+  providedIn: 'root'
+})
 
-  private async saveTransactionsToStorage() {
-    await this._storage?.set('transactions', this.transactions);
-    // console.log('Transaction added:', this.transactions);
-  }
-
-  async getTransactions(): Promise<Transaction[]> {
-    const transactions = await this._storage?.get('transactions');
-    console.log(transactions);
-    
-    this.transactions = transactions || [];
-    return this.transactions;
-  }
-
-  async removeTransaction(id: string) {
-    this.transactions = this.transactions.filter(transaction => transaction.id !== id);
-    await this.saveTransactionsToStorage();
-    console.log(`Transaction with ID ${id} removed`);
-  }
+export class TransactionService extends Dexie {
+  transactions!: Table<Transaction, number>;
+  getDailyExpenses: any;
 
 
-  calculateTotal(type: 'income' | 'expense'): Promise<number> {
-    if (!this._storage) {
-      console.error('Storage is not initialized');
-      return Promise.resolve(0); // Return 0 if storage is not initialized
-    }
-  
-    return this._storage.get('transactions').then((transactions: Transaction[] | null) => {
-      transactions = transactions || []; // Default to an empty array if null
-      return transactions
-        .filter((t: Transaction) => t.type === type)
-        .reduce((total: number, t: Transaction) => total + t.amount, 0);
-    }).catch((error) => {
-      console.error('Error retrieving transactions:', error);
-      return 0; // Return 0 in case of an error
+  constructor() {
+    super('FinancialIntelligenceDB');
+    this.version(1).stores({
+      transactions: '++id, type, date, amount', // Define indexes
     });
+    this.transactions = this.table('transactions');
+  }
+
+  // Initialize storage
+  async init(): Promise<void> {
+    const count = await this.transactions.count();
+    if (count === 0) {
+      console.log('Initializing sample data...');
+    }
+  }
+
+  async addTransaction(transaction: Transaction): Promise<number | null> {
+    try {
+      // Use a custom unique check (e.g., based on type, date, and amount)
+      const existingTransaction = await this.transactions
+        .where({ type: transaction.type, date: transaction.date, amount: transaction.amount })
+        .first();
+  
+      if (existingTransaction) {
+        console.warn('Transaction already exists:', existingTransaction);
+        return null; // Return null if a duplicate is detected
+      }
+  
+      // Add the transaction if no duplicate is found
+      return await this.transactions.add(transaction);
+    } catch (error) {
+      // Narrow the type of `error` to `Error` if possible
+      if (error instanceof Dexie.ConstraintError) {
+        console.error('ConstraintError: Duplicate key detected', error.message);
+      } else if (error instanceof Error) {
+        console.error('Error adding transaction:', error.message);
+      } else {
+        console.error('Unexpected error:', error);
+      }
+      return null; // Return null to indicate failure
+    }
+  }
+
+  
+
+  // Fetch all transactions
+  async getAllTransactions(): Promise<Transaction[]> {
+    return this.transactions.toArray();
+  }
+
+  // Get transactions filtered by type
+  async getTransactionsByType(type: string): Promise<Transaction[]> {
+    return this.transactions.where('type').equals(type).toArray();
+  }
+
+  async getTransactionById(id: number): Promise<Transaction | undefined> {
+    return this.transactions.get(id);
+  }
+  
+  async updateTransaction(transaction: Transaction): Promise<void> {
+    await this.transactions.update(transaction.id!, transaction);
+  }
+  
+  async deleteTransaction(id: number): Promise<void> {
+    await this.transactions.delete(id);
+  }
+  
+  // Calculate the total amount for transactions of a specific type
+  async calculateTotal(type: string): Promise<number> {
+    const transactions = await this.getTransactionsByType(type);
+    return transactions.reduce((sum, t) => sum + t.amount, 0);
+  }
+
+  // Calculate the monthly average for transactions of a specific type
+  async calculateMonthlyAverage(type: string): Promise<number> {
+    const transactions = await this.getTransactionsByType(type);
+    const now = new Date();
+    const currentMonth = now.getMonth();
+
+    const monthlyTransactions = transactions.filter(
+      (t) => new Date(t.date).getMonth() === currentMonth
+    );
+
+    const total = monthlyTransactions.reduce((sum, t) => sum + t.amount, 0);
+    return monthlyTransactions.length > 0 ? total / monthlyTransactions.length : 0;
+  }
+
+  async getWeeklyData(): Promise<{ week: number; amount: number }[]> {
+    const transactions = await this.getAllTransactions();
+    const weeklyData: { [key: number]: number } = {};
+  
+    transactions.forEach(t => {
+      const week = this.getWeekNumber(new Date(t.date));
+      weeklyData[week] = (weeklyData[week] || 0) + t.amount;
+    });
+  
+    return Object.entries(weeklyData).map(([week, amount]) => ({ week: parseInt(week), amount }));
+  }
+  
+  async getDailyData(): Promise<{ hour: string; amount: number }[]> {
+    const transactions = await this.getAllTransactions();
+    const dailyData: { [key: string]: number } = {};
+  
+    transactions.forEach(t => {
+      const hour = new Date(t.date).getHours();
+      const hourLabel = `${hour}:00`;
+      dailyData[hourLabel] = (dailyData[hourLabel] || 0) + t.amount;
+    });
+  
+    return Object.entries(dailyData).map(([hour, amount]) => ({ hour, amount }));
+  }
+  
+  private getWeekNumber(date: Date): number {
+    const oneJan = new Date(date.getFullYear(), 0, 1);
+    const numberOfDays = Math.floor((date.getTime() - oneJan.getTime()) / (24 * 60 * 60 * 1000));
+    return Math.ceil((numberOfDays + oneJan.getDay() + 1) / 7);
   }
   
 
+}
 
-  calculateMonthlyAverage(type: 'income' | 'expense'): number {
-    const filteredTransactions = this.transactions.filter((t) => t.type === type);
-    // Calculate monthly average here based on filteredTransactions
-    return 0; // placeholder
-  }
-
-  private generateId(): string {
-    return Math.random().toString(36).substr(2, 9);
-  }
-
-  getDailyExpenses(): { [day: string]: number } {
-    const dailyExpenses: { [day: string]: number } = {};
-  
-    this.transactions
-      .filter((t) => t.type === 'expense')
-      .forEach((transaction) => {
-        const day = transaction.date.toISOString().split('T')[0];
-        dailyExpenses[day] = (dailyExpenses[day] || 0) + transaction.amount;
-      });
-  
-    return dailyExpenses;
-  }

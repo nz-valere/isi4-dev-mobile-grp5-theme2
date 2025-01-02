@@ -9,9 +9,7 @@ import { Transaction } from 'src/app/models/transaction.model';
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
-
   transactions: Transaction[] = [];
-  
   totalIncome = 0;
   totalExpenses = 0;
   averageExpenses = 0;
@@ -23,18 +21,22 @@ export class HomePage implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.transactions = await this.transactionService.getAllTransactions();
-    await this.transactionService.init();
-    this.fetchSummary();
-
+    try {
+      this.transactions = await this.transactionService.getAllTransactions();
+      await this.fetchSummary();
+    } catch (error) {
+      console.error('Error initializing HomePage:', error);
+    }
   }
 
-  fetchSummary() {
-      this.transactionService.init().then(() => {
-        this.transactionService.calculateTotal('income').then(res => this.totalIncome = res);
-        this.transactionService.calculateTotal('expense').then(res => this.totalExpenses = res);
-        this.transactionService.calculateMonthlyAverage('expense').then(res => this.averageExpenses = res);
-        this.recommendation = this.recommendationService.getMonthlyRecommendation(this.totalExpenses);
-      })
+  async fetchSummary() {
+    try {
+      this.totalIncome = await this.transactionService.calculateTotal('income');
+      this.totalExpenses = await this.transactionService.calculateTotal('expense');
+      this.averageExpenses = await this.transactionService.calculateMonthlyAverage('expense');
+      this.recommendation = this.recommendationService.getMonthlyRecommendation(this.totalExpenses);
+    } catch (error) {
+      console.error('Error fetching summary:', error);
+    }
   }
 }

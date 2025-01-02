@@ -1,134 +1,198 @@
 import { Injectable } from '@angular/core';
+import { Platform } from '@ionic/angular';
+import { SQLite, SQLiteObject } from '@ionic-native/sqlite/ngx';
 import { Transaction } from '../../models/transaction.model';
-import Dexie, { Table } from 'dexie';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
+export class TransactionService {
+  private dbInstance: SQLiteObject | null = null;
+  private readonly dbName = 'FinancialIntelligenceDB.db';
+  private readonly tableName = 'transactions';
 
-export class TransactionService extends Dexie {
-  transactions!: Table<Transaction, number>;
-  getDailyExpenses: any;
-
-
-  constructor() {
-    super('FinancialIntelligenceDB');
-    this.version(1).stores({
-      transactions: '++id, type, date, amount', // Define indexes
-    });
-    this.transactions = this.table('transactions');
+  constructor(private sqlite: SQLite, private platform: Platform) {
+    this.initDB();
   }
 
-  // Initialize storage
-  async init(): Promise<void> {
-    const count = await this.transactions.count();
-    if (count === 0) {
-      console.log('Initializing sample data...');
+  // Initialize the SQLite database
+  private async initDB(): Promise<void> {
+    try {
+      await this.platform.ready();
+      const db = await this.sqlite.create({
+        name: this.dbName,
+        location: 'default',
+      });
+      this.dbInstance = db;
+      await this.createTable();
+    } catch (error) {
+      console.error('Error initializing database:', error);
     }
   }
 
+  // Create the transactions table if it doesn't exist
+  private async createTable(): Promise<void> {
+    const query = `
+      CREATE TABLE IF NOT EXISTS ${this.tableName} (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        type TEXT,
+        date TEXT,
+        amount REAL
+      )`;
+    await this.executeSql(query, []);
+  }
+
+  // Helper function to execute SQL queries
+  private async executeSql(query: string, params: any[]): Promise<any> {
+    if (!this.dbInstance) throw new Error('Database not initialized.');
+    return this.dbInstance.executeSql(query, params);
+  }
+
+  // Add a new transaction
   async addTransaction(transaction: Transaction): Promise<number | null> {
     try {
-      // Use a custom unique check (e.g., based on type, date, and amount)
-      const existingTransaction = await this.transactions
-        .where({ type: transaction.type, date: transaction.date, amount: transaction.amount })
-        .first();
-  
-      if (existingTransaction) {
-        console.warn('Transaction already exists:', existingTransaction);
-        return null; // Return null if a duplicate is detected
-      }
-  
-      // Add the transaction if no duplicate is found
-      return await this.transactions.add(transaction);
+      const query = `
+        INSERT INTO ${this.tableName} (type, date, amount)
+        VALUES (?, ?, ?)`;
+      const result = await this.executeSql(query, [
+        transaction.type,
+        transaction.date,
+        transaction.amount,
+      ]);
+      return result.insertId;
     } catch (error) {
-      // Narrow the type of `error` to `Error` if possible
-      if (error instanceof Dexie.ConstraintError) {
-        console.error('ConstraintError: Duplicate key detected', error.message);
-      } else if (error instanceof Error) {
-        console.error('Error adding transaction:', error.message);
-      } else {
-        console.error('Unexpected error:', error);
-      }
-      return null; // Return null to indicate failure
+      console.error('Error adding transaction:', error);
+      return null;
     }
   }
 
-  
-
-  // Fetch all transactions
+  // Get all transactions
   async getAllTransactions(): Promise<Transaction[]> {
-    return this.transactions.toArray();
+    const query = `SELECT * FROM ${this.tableName}`;
+    const result = await this.executeSql(query, []);
+    const transactions: Transaction[] = [];
+    for (let i = 0; i < result.rows.length; i++) {
+      transactions.push(result.rows.item(i));
+    }
+    return transactions;
   }
 
-  // Get transactions filtered by type
+  // Get transactions by type
   async getTransactionsByType(type: string): Promise<Transaction[]> {
-    return this.transactions.where('type').equals(type).toArray();
+    const query = `SELECT * FROM ${this.tableName} WHERE type = ?`;
+    const result = await this.executeSql(query, [type]);
+    const transactions: Transaction[] = [];
+    for (let i = 0; i < result.rows.length; i++) {
+      transactions.push(result.rows.item(i));
+    }
+    return transactions;
   }
 
+  // Get a transaction by ID
   async getTransactionById(id: number): Promise<Transaction | undefined> {
-    return this.transactions.get(id);
+    const query = `SELECT * FROM ${this.tableName} WHERE id = ?`;
+    const result = await this.executeSql(query, [id]);
+    return result.rows.length > 0 ? result.rows.item(0) : undefined;
   }
-  
+
+  // Update a transaction
   async updateTransaction(transaction: Transaction): Promise<void> {
-    await this.transactions.update(transaction.id!, transaction);
+    const query = `
+      UPDATE ${this.tableName}
+      SET type = ?, date = ?, amount = ?
+      WHERE id = ?`;
+    await this.executeSql(query, [
+      transaction.type,
+      transaction.date,
+      transaction.amount,
+      transaction.id,
+    ]);
   }
-  
+
+  // Delete a transaction
   async deleteTransaction(id: number): Promise<void> {
-    await this.transactions.delete(id);
+    const query = `DELETE FROM ${this.tableName} WHERE id = ?`;
+    await this.executeSql(query, [id]);
   }
-  
+
   // Calculate the total amount for transactions of a specific type
   async calculateTotal(type: string): Promise<number> {
-    const transactions = await this.getTransactionsByType(type);
-    return transactions.reduce((sum, t) => sum + t.amount, 0);
+    const query = `
+      SELECT SUM(amount) AS total
+      FROM ${this.tableName}
+      WHERE type = ?`;
+    const result = await this.executeSql(query, [type]);
+    return result.rows.item(0)?.total || 0;
   }
 
   // Calculate the monthly average for transactions of a specific type
   async calculateMonthlyAverage(type: string): Promise<number> {
-    const transactions = await this.getTransactionsByType(type);
     const now = new Date();
-    const currentMonth = now.getMonth();
-
-    const monthlyTransactions = transactions.filter(
-      (t) => new Date(t.date).getMonth() === currentMonth
-    );
-
-    const total = monthlyTransactions.reduce((sum, t) => sum + t.amount, 0);
-    return monthlyTransactions.length > 0 ? total / monthlyTransactions.length : 0;
+    const currentMonth = now.getMonth() + 1;
+    const currentYear = now.getFullYear();
+    const query = `
+      SELECT AVG(amount) AS average
+      FROM ${this.tableName}
+      WHERE type = ? AND strftime('%Y', date) = ? AND strftime('%m', date) = ?`;
+    const result = await this.executeSql(query, [
+      type,
+      currentYear.toString(),
+      currentMonth.toString().padStart(2, '0'),
+    ]);
+    return result.rows.item(0)?.average || 0;
   }
 
-  async getWeeklyData(): Promise<{ week: number; amount: number }[]> {
-    const transactions = await this.getAllTransactions();
-    const weeklyData: { [key: number]: number } = {};
-  
-    transactions.forEach(t => {
-      const week = this.getWeekNumber(new Date(t.date));
-      weeklyData[week] = (weeklyData[week] || 0) + t.amount;
-    });
-  
-    return Object.entries(weeklyData).map(([week, amount]) => ({ week: parseInt(week), amount }));
+  // Get weekly expenses grouped by week
+  async getWeeklyExpenses(): Promise<{ week: number; amount: number }[]> {
+    const query = `
+      SELECT strftime('%W', date) AS week, SUM(amount) AS amount
+      FROM ${this.tableName}
+      WHERE type = 'expense'
+      GROUP BY week
+      ORDER BY week ASC;
+    `;
+    try {
+      const result = await this.executeSql(query, []);
+      const weeklyExpenses: { week: number; amount: number }[] = [];
+      for (let i = 0; i < result.rows.length; i++) {
+        const row = result.rows.item(i);
+        weeklyExpenses.push({
+          week: parseInt(row.week, 10),
+          amount: row.amount,
+        });
+      }
+      return weeklyExpenses;
+    } catch (error) {
+      console.error('Error fetching weekly expenses:', error);
+      return [];
+    }
   }
-  
-  async getDailyData(): Promise<{ hour: string; amount: number }[]> {
-    const transactions = await this.getAllTransactions();
-    const dailyData: { [key: string]: number } = {};
-  
-    transactions.forEach(t => {
-      const hour = new Date(t.date).getHours();
-      const hourLabel = `${hour}:00`;
-      dailyData[hourLabel] = (dailyData[hourLabel] || 0) + t.amount;
-    });
-  
-    return Object.entries(dailyData).map(([hour, amount]) => ({ hour, amount }));
-  }
-  
-  private getWeekNumber(date: Date): number {
-    const oneJan = new Date(date.getFullYear(), 0, 1);
-    const numberOfDays = Math.floor((date.getTime() - oneJan.getTime()) / (24 * 60 * 60 * 1000));
-    return Math.ceil((numberOfDays + oneJan.getDay() + 1) / 7);
-  }
-  
 
+  // Get daily expenses grouped by hour
+  async getDailyExpenses(): Promise<{ hour: string; amount: number }[]> {
+    const query = `
+      SELECT strftime('%H', date) AS hour, SUM(amount) AS amount
+      FROM ${this.tableName}
+      WHERE type = 'expense'
+      AND date >= date('now', 'start of day')
+      GROUP BY hour
+      ORDER BY hour ASC;
+    `;
+    try {
+      const result = await this.executeSql(query, []);
+      const dailyExpenses: { hour: string; amount: number }[] = [];
+      for (let i = 0; i < result.rows.length; i++) {
+        const row = result.rows.item(i);
+        dailyExpenses.push({
+          hour: row.hour,
+          amount: row.amount,
+        });
+      }
+      return dailyExpenses;
+    } catch (error) {
+      console.error('Error fetching daily expenses:', error);
+      return [];
+    }
+  }
+  
 }
-
