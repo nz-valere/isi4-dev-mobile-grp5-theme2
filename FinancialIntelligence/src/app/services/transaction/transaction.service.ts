@@ -14,13 +14,15 @@ export class TransactionService {
   private readonly tableName = 'transactions';
 
   constructor(@Inject(SQLite) private sqlite: SQLite, private platform: Platform) {
-    this.initDB();
+    this.initDB().catch((error) => {
+      console.error('Database initialization failed:', error);
+    });  
   }
 
   // Initialize the SQLite database
   private async initDB(): Promise<void> {
     try {
-      await this.platform.ready();
+      await this.platform.ready(); // Ensure the platform is ready
       const db = await this.sqlite.create({
         name: this.dbName,
         location: 'default',
@@ -31,6 +33,7 @@ export class TransactionService {
       console.error('Error initializing database:', error);
     }
   }
+  
 
   // Create the transactions table if it doesn't exist
   private async createTable(): Promise<void> {
@@ -40,15 +43,24 @@ export class TransactionService {
         type TEXT,
         date TEXT,
         amount REAL
-      )`;
+      )`;try{
     await this.executeSql(query, []);
+    }catch (error) {
+      console.error('Error creating table:', error);
+    }
   }
 
   // Helper function to execute SQL queries
   private async executeSql(query: string, params: any[]): Promise<any> {
-    if (!this.dbInstance) throw new Error('Database not initialized.');
+    if (!this.dbInstance) {
+      await this.initDB(); // Ensure the database is initialized
+      if (!this.dbInstance) {
+        throw new Error('Database not initialized.');
+      }
+    }
     return this.dbInstance.executeSql(query, params);
   }
+  
 
   // Add a new transaction
   async addTransaction(transaction: Transaction): Promise<number | null> {
