@@ -1,32 +1,61 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Dashboard</ion-title>
-  </ion-toolbar>
-</ion-header>
 
-<ion-content>
-  <div>
-    <h2>Summary</h2>
-    <p>Total Income: {{ totalIncome }}</p>
-    <p>Total Expenses: {{ totalExpenses }}</p>
-    <p>Average Expenses (Monthly): {{ averageExpenses }}</p>
-    <p>Recommendation: {{ recommendation }}</p>
-    <!-- Weekly, monthly, yearly summaries here -->
-    <ion-button [routerLink]="['/transaction']">Operate Transaction</ion-button>
+
+<ion-content class="dashboard-content">
+  <div class="summary-section">
+    
+    <h2 color="success">Summary</h2>
+    <div class="summary-cards">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Total Income</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          {{ totalIncome | currency }}
+        </ion-card-content>
+      </ion-card>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Total Expenses</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          {{ totalExpenses | currency }}
+        </ion-card-content>
+      </ion-card>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Average Expenses (Monthly)</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          {{ averageExpenses | currency }}
+        </ion-card-content>
+      </ion-card>
+    </div>
+    <ion-chip color="success">
+      <ion-icon name="bulb-outline" color="light"></ion-icon>
+      <ion-label>Recommendation ~
+         {{ recommendation }}</ion-label>
+    </ion-chip>
+    
   </div>
-  <ion-list>
-    <ion-item *ngFor="let transaction of transactions">
-      <ion-label>
-        <h2>{{ transaction.label }}</h2>
-        <p>{{ transaction.type }} - {{ transaction.amount | currency }}</p>
-      </ion-label>
-      <ion-button fill="clear" [routerLink]="['/transaction', transaction.id]">
-        Edit
-      </ion-button>
-    </ion-item>
-  </ion-list>
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+
+  <div class="transactions-section">
+    <h2 color="success">Recent Transactions</h2>
+    <ion-list>
+      <ion-item *ngFor="let transaction of transactions" lines="full">
+        
+        <ion-label>
+          <h3>{{ transaction.label }}</h3>
+          <p>{{ transaction.type }} - {{ transaction.amount | currency }}</p>
+        </ion-label>
+        <ion-button color="success"  fill="clear" [routerLink]="['/transaction', transaction.id]">
+          Edit
+        </ion-button>
+      </ion-item>
+    </ion-list>
   </div>
+  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
+    <ion-fab-button color="success">
+      <ion-icon name="add" [routerLink]="['/transaction']"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

@@ -1,34 +1,156 @@
-#container {
-    text-align: center;
+.error-message {
+  margin: 2px 8px;
+  font-size: 0.6em;
+}
+
+ion-item {
+  --highlight-color-focused: var(--ion-color-primary);
+  margin-bottom: 15px;
+}
+
+
+
+ion-input, ion-select {
+  // --placeholder-color: #a382ff;
+  // border: 1px solid rgb(136, 125, 125);
+  border-radius: 6px;
+  padding: 8px;
+  --background: #f9f7ff;
+}
+
+ion-button {
+  margin-top: 30px;
+  margin-right: 15px;
+}
+ion-row {
+  margin-bottom: 10px;
+margin-left: 1em;
+
+}
+
+ion-label {
+  font-weight: normal;
+  color: #16151a;
+  padding: 10px;
+}
+
+
+// .error-message {
+//   font-size: 0.85em;
+//   margin-top: 5px;
+// }
+
+
+ 
+
+
+
+
+ .dashboard-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  width: 100%;
+}
+
+.summary-section, .transactions-section {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.section-title {
+  margin-bottom: 12px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  text-transform: uppercase;
+}
+
+.summary-cards {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+  width: 100%;
+}
+
+ion-card {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+}
+
+.action-button {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+ion-button {
+  width: 70%;
+  font-size: 0.8rem;
+  margin: 0 7px;
+  margin-top: 20px;
+  margin-left:2.5rem;
+}
+// p{
   
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
+// }
+/* Modal Form Responsive Styles */
+.modal-form ion-grid {
+  padding: 0;
+}
+
+.modal-form ion-row {
+  margin-bottom: 8px;
+}
+
+.modal-form ion-col {
+  padding: 3px;
+}
+
+/* Pour les écrans de iPhone SE */
+@media screen and (max-width: 375px) {
+  ion-col[size="3"] {
+    flex: 0 0 100%;
+    max-width: 100%;
+    margin-bottom: 5px;
   }
-  
-  #container strong {
-    font-size: 20px;
-    line-height: 26px;
+
+  ion-col[size="6"] {
+    flex: 0 0 100%;
+    max-width: 100%;
   }
-  
-  #container p {
-    font-size: 16px;
-    line-height: 22px;
-  
-    color: #8c8c8c;
-  
-    margin: 0;
+
+  ion-chip {
+    margin-left: 0;
+    margin-bottom: 1em;
+    justify-content: center;
   }
-  
-  #container a {
-    text-decoration: none;
+
+  .transactions-section {
+    max-height: 300px;
   }
-  .error-message {
-    color: red;
-    font-size: 0.9rem;
-    margin-left: 15px;
-    margin-top: -10px;
+
+  ion-item {
+    padding: 6px;
   }
-  
+
+  ion-label h3 {
+    font-size: 0.8rem;
+  }
+
+  ion-label p {
+    font-size: 0.5rem;
+  }
+}
+
+/* Pour améliorer le scroll sur mobile */
+.transaction-list {
+  -webkit-overflow-scrolling: touch;
+  max-height: 250px;
+}

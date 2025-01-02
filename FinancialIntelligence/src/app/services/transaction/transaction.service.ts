@@ -1,6 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite/ngx';
+import { CapacitorSQLite, SQLiteDBConnection } from '@capacitor-community/sqlite';
+
 import { Transaction } from '../../models/transaction.model';
 
 @Injectable({
@@ -11,7 +13,7 @@ export class TransactionService {
   private readonly dbName = 'FinancialIntelligenceDB.db';
   private readonly tableName = 'transactions';
 
-  constructor(private sqlite: SQLite, private platform: Platform) {
+  constructor(@Inject(SQLite) private sqlite: SQLite, private platform: Platform) {
     this.initDB();
   }
 
@@ -194,5 +196,5 @@ export class TransactionService {
       return [];
     }
   }
-  
+
 }
