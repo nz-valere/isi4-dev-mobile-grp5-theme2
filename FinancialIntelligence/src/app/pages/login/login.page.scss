@@ -63,6 +63,15 @@
   .register-link p {
     color: #666;
   }
+  ion-fab {
+    margin: 0 16px 16px 0;
+  }
+  
+  ion-fab-button {
+    --background: #4CAF50; /* couleur verte */
+    --background-hover: #45a049;
+    --background-focused: #45a049;
+  }
   
   ion-label {
     

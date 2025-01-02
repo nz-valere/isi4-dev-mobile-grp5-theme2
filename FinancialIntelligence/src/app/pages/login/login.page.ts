@@ -28,6 +28,10 @@ export class LoginPage{
     // Navigate to home page after successful login (for example)
     this.router.navigate(['/home']);
   }
+  onAddClick() {
+    // Ajoutez ici la logique pour ouvrir votre modal ou naviguer vers une nouvelle page
+    console.log('Add button clicked');
+  }
 
   // if (this.password === this.confirmPassword) {
   //   // Handle signup logic here
