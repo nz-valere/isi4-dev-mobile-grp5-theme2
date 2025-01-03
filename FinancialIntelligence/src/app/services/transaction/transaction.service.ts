@@ -84,6 +84,7 @@ export class TransactionService {
   async getAllTransactions(): Promise<Transaction[]> {
     const query = `SELECT * FROM ${this.tableName}`;
     const result = await this.executeSql(query, []);
+    console.log('Raw SQL result:', result);
     const transactions: Transaction[] = [];
     for (let i = 0; i < result.rows.length; i++) {
       transactions.push(result.rows.item(i));

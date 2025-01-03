@@ -1,5 +1,4 @@
 
-
 <ion-content class="dashboard-content">
   <div class="summary-section">
     
@@ -42,16 +41,15 @@
     <h2 color="success">Recent Transactions</h2>
     <ion-list>
       <ion-item *ngFor="let transaction of transactions" lines="full">
-        
         <ion-label>
-          <h3>{{ transaction.label }}</h3>
+          <h3>{{ transaction.label || 'Unnamed Transaction' }}</h3>
           <p>{{ transaction.type }} - {{ transaction.amount | currency }}</p>
         </ion-label>
-        <ion-button color="success"  fill="clear" [routerLink]="['/transaction', transaction.id]">
+        <ion-button color="success" fill="clear" [routerLink]="['/transaction', transaction.id]">
           Edit
         </ion-button>
       </ion-item>
-    </ion-list>
+    </ion-list>    
   </div>
   <ion-fab vertical="bottom" horizontal="center" slot="fixed">
     <ion-fab-button color="success">

@@ -23,6 +23,7 @@ export class HomePage implements OnInit {
   async ngOnInit() {
     try {
       this.transactions = await this.transactionService.getAllTransactions();
+      console.log('Transactions fetched:', this.transactions);
       await this.fetchSummary();
     } catch (error) {
       console.error('Error initializing HomePage:', error);
