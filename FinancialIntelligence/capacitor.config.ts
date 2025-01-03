@@ -3,7 +3,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'io.ionic.starter',
   appName: 'FinancialIntelligence',
-  webDir: 'www',
+  webDir: 'www', 
   bundledWebRuntime: false,
   plugins: {
     CapacitorSQLite: {
@@ -12,5 +12,6 @@ const config: CapacitorConfig = {
     },
   },
 };
+
 
 export default config;
