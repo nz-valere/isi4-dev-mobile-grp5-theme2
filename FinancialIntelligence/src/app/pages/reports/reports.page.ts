@@ -12,9 +12,10 @@ import {
 } from 'chart.js/auto';
 
 @Component({
-  selector: 'app-reports',
-  templateUrl: './reports.page.html',
-  styleUrls: ['./reports.page.scss'],
+    selector: 'app-reports',
+    templateUrl: './reports.page.html',
+    styleUrls: ['./reports.page.scss'],
+    standalone: false
 })
 export class ReportsPage implements OnInit {
   weeklyData: number[] = [];

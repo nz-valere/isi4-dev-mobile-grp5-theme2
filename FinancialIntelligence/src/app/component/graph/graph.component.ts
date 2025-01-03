@@ -10,9 +10,10 @@ import { Chart, registerables, CategoryScale,
 Chart.register(...registerables);
 
 @Component({
-  selector: 'app-graph',
-  templateUrl: './graph.component.html',
-  styleUrls: ['./graph.component.scss'],
+    selector: 'app-graph',
+    templateUrl: './graph.component.html',
+    styleUrls: ['./graph.component.scss'],
+    standalone: false
 })
 export class GraphComponent implements OnInit, AfterViewInit {
 

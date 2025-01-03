@@ -4,9 +4,10 @@ import { RecommendationService } from '../../services/recommendation/recommendat
 import { Transaction } from 'src/app/models/transaction.model';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.page.html',
-  styleUrls: ['./home.page.scss'],
+    selector: 'app-home',
+    templateUrl: './home.page.html',
+    styleUrls: ['./home.page.scss'],
+    standalone: false
 })
 export class HomePage implements OnInit {
   transactions: Transaction[] = [];

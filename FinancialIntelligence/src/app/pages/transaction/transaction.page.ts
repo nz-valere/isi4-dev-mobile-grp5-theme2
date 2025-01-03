@@ -4,9 +4,10 @@ import { Transaction } from '../../models/transaction.model';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-transaction',
-  templateUrl: './transaction.page.html',
-  styleUrls: ['./transaction.page.scss'],
+    selector: 'app-transaction',
+    templateUrl: './transaction.page.html',
+    styleUrls: ['./transaction.page.scss'],
+    standalone: false
 })
 export class TransactionPage implements OnInit {
   transaction: Transaction = {
