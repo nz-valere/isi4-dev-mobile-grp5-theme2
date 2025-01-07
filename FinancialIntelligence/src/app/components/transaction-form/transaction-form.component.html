@@ -1,0 +1,46 @@
+<form [formGroup]="transactionForm" (ngSubmit)="onSubmit()">
+  <app-transaction-type [type]="type"></app-transaction-type>
+  <app-transaction-details 
+    [form]="transactionForm"
+    [showContactField]="type === 'LOAN' || type === 'CREDIT'">
+  </app-transaction-details>
+
+  <!-- Ajout du bouton pour prendre une photo -->
+  <ion-item>
+    <ion-label>Justificatif</ion-label>
+    <ion-button slot="end" (click)="takePicture()" fill="clear">
+      <ion-icon slot="start" name="camera"></ion-icon>
+      {{ hasPhoto ? 'Changer la photo' : 'Prendre une photo' }}
+    </ion-button>
+  </ion-item>
+
+  @if (photoUrl) {
+    <ion-item>
+      <ion-thumbnail slot="start">
+        <img [src]="photoUrl" alt="Justificatif">
+      </ion-thumbnail>
+      <ion-label>Photo ajoutée</ion-label>
+    </ion-item>
+  }
+
+  @if (validationErrors.length > 0) {
+    <ion-list class="validation-errors">
+      @for (error of validationErrors; track error) {
+        <ion-item color="danger">
+          <ion-label>{{ error }}</ion-label>
+        </ion-item>
+      }
+    </ion-list>
+  }
+
+  <ion-button 
+    expand="block" 
+    type="submit" 
+    [disabled]="!transactionForm.valid || isSubmitting">
+    @if (isSubmitting) {
+      <ion-spinner name="dots"></ion-spinner>
+    } @else {
+      <span>Enregistrer</span>
+    }
+  </ion-button>
+</form>

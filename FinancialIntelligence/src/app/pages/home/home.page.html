@@ -1,59 +1,85 @@
+<ion-content [fullscreen]="true">
+  <!-- En-tête fixe avec le résumé -->
+  <div class="header-summary">
+    <app-dashboard-summary></app-dashboard-summary>
+  </div>
 
-<ion-content class="dashboard-content">
-  <div class="summary-section">
-    
-    <h2 color="success">Summary</h2>
-    <div class="summary-cards">
-      <ion-card>
-        <ion-card-header>
-          <ion-card-subtitle>Total Income</ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content>
-          {{ totalIncome | currency }}
-        </ion-card-content>
-      </ion-card>
-      <ion-card>
-        <ion-card-header>
-          <ion-card-subtitle>Total Expenses</ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content>
-          {{ totalExpenses | currency }}
-        </ion-card-content>
-      </ion-card>
-      <ion-card>
-        <ion-card-header>
-          <ion-card-subtitle>Average Expenses (Monthly)</ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content>
-          {{ averageExpenses | currency }}
-        </ion-card-content>
-      </ion-card>
+  <!-- Segments pour la navigation -->
+  <ion-segment [(ngModel)]="selectedSegment" (ionChange)="segmentChanged($event)" class="ion-padding">
+    <ion-segment-button value="dashboard">
+      <ion-icon name="wallet"></ion-icon>
+      <ion-label>Résumé</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="charts">
+      <ion-icon name="stats-chart"></ion-icon>
+      <ion-label>Graphiques</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="actions">
+      <ion-icon name="trending-up"></ion-icon>
+      <ion-label>Actions</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- Contenu selon le segment sélectionné -->
+  <div class="segment-content" [ngSwitch]="selectedSegment">
+    <!-- Dashboard -->
+    <div *ngSwitchCase="'dashboard'" class="section-container">
+      <div class="recommendations-section">
+        <app-expense-recommendations></app-expense-recommendations>
+      </div>
     </div>
-    <ion-chip color="success">
-      <ion-icon name="bulb-outline" color="light"></ion-icon>
-      <ion-label>Recommendation ~
-         {{ recommendation }}</ion-label>
-    </ion-chip>
-    
+
+    <!-- Charts -->
+    <div *ngSwitchCase="'charts'" class="section-container">
+      <div class="charts-section">
+        <app-weekly-chart></app-weekly-chart>
+        <app-daily-chart></app-daily-chart>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div *ngSwitchCase="'actions'" class="section-container">
+      <div class="quick-actions">
+        <h2>Actions rapides</h2>
+        <div class="action-buttons">
+          <ion-button expand="block" color="success" (click)="addIncome()" class="action-button ion-activatable">
+            <ion-ripple-effect></ion-ripple-effect>
+            <ion-icon name="arrow-down" slot="start"></ion-icon>
+            Ajouter un revenu
+          </ion-button>
+          
+          <ion-button expand="block" color="danger" (click)="addExpense()" class="action-button ion-activatable">
+            <ion-ripple-effect></ion-ripple-effect>
+            <ion-icon name="arrow-up" slot="start"></ion-icon>
+            Ajouter une dépense
+          </ion-button>
+          
+          <ion-button expand="block" color="warning" (click)="addLoan()" class="action-button ion-activatable">
+            <ion-ripple-effect></ion-ripple-effect>
+            <ion-icon name="cash" slot="start"></ion-icon>
+            Ajouter un prêt
+          </ion-button>
+          
+          <ion-button expand="block" color="primary" (click)="addCredit()" class="action-button ion-activatable">
+            <ion-ripple-effect></ion-ripple-effect>
+            <ion-icon name="card" slot="start"></ion-icon>
+            Ajouter un crédit
+          </ion-button>
+          
+          <ion-button expand="block" color="tertiary" (click)="addSavings()" class="action-button ion-activatable">
+            <ion-ripple-effect></ion-ripple-effect>
+            <ion-icon name="save" slot="start"></ion-icon>
+            Ajouter une épargne
+          </ion-button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="transactions-section">
-    <h2 color="success">Recent Transactions</h2>
-    <ion-list>
-      <ion-item *ngFor="let transaction of transactions" lines="full">
-        <ion-label>
-          <h3>{{ transaction.label || 'Unnamed Transaction' }}</h3>
-          <p>{{ transaction.type }} - {{ transaction.amount | currency }}</p>
-        </ion-label>
-        <ion-button color="success" fill="clear" [routerLink]="['/transaction', transaction.id]">
-          Edit
-        </ion-button>
-      </ion-item>
-    </ion-list>    
-  </div>
-  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
-    <ion-fab-button color="success">
-      <ion-icon name="add" [routerLink]="['/transaction']"></ion-icon>
+  <!-- FAB pour ajout rapide -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="primary" (click)="addExpense()">
+      <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 </ion-content>

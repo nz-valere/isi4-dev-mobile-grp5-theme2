@@ -1,0 +1,28 @@
+<ion-card *ngIf="shouldShow && analysis" class="recommendations-card">
+  <ion-card-header>
+    <ion-card-title>
+      Recommandations du mois
+      <ion-button fill="clear" (click)="dismiss()" slot="end">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-card-title>
+    <ion-card-subtitle>
+      Basées sur vos dépenses du mois dernier
+    </ion-card-subtitle>
+  </ion-card-header>
+
+  <ion-card-content>
+    <div class="expense-level">
+      <ion-badge [color]="getLevelColor()">
+        Niveau de dépenses : {{ analysis.level }}
+      </ion-badge>
+      <p>{{ analysis.percentage | number:'1.0-0' }}% de vos revenus</p>
+    </div>
+
+    <ion-list lines="none">
+      <ion-item *ngFor="let suggestion of suggestions">
+        <ion-text [color]="getLevelColor()">{{ suggestion }}</ion-text>
+      </ion-item>
+    </ion-list>
+  </ion-card-content>
+</ion-card>

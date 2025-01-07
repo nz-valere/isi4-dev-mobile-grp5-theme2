@@ -1,110 +1,102 @@
-.dashboard-content {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 12px;
-  width: 100%;
+:host {
+  display: block;
+  height: 100%;
 }
 
-.summary-section, .transactions-section {
+ion-content {
+  --background: #f5f5f5;
+
+  &::part(scroll) {
+    padding-bottom: 32px;
+  }
+}
+
+.dashboard-section,
+.charts-section,
+.recommendations-section,
+.quick-actions {
   background: #ffffff;
-  border-radius: 8px;
-  padding: 12px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  width: 100%;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.section-title {
-  margin-bottom: 12px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #333;
-  text-transform: uppercase;
+.charts-section {
+  app-weekly-chart,
+  app-daily-chart {
+    display: block;
+    margin-bottom: 16px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
 }
 
-.summary-cards {
+.quick-actions {
+  h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+    margin-bottom: 16px;
+    padding-left: 8px;
+  }
+}
+
+.action-buttons {
   display: flex;
-  gap: 10px;
   flex-direction: column;
-  width: 100%;
-}
+  gap: 12px;
 
-ion-card {
-  width: 100%;
-  max-width: 100%;
-  margin: 0;
-}
+  .action-button {
+    margin: 0;
+    height: 48px;
+    font-weight: 500;
+    --border-radius: 12px;
+    --box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    
+    &::part(native) {
+      padding: 0 16px;
+    }
 
-.action-button {
-  margin-top: 15px;
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
+    ion-icon {
+      font-size: 20px;
+      margin-right: 8px;
+    }
 
-ion-button.operate {
-  width: 100%;
-  font-size: 0.9rem;
-  margin: 0 8px;
-}
-h2{
-  font-size: large;
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-}
-
-
-/* Modal Form Responsive Styles */
-.modal-form ion-grid {
-  padding: 0;
-}
-
-.modal-form ion-row {
-  margin-bottom: 10px;
-}
-
-.modal-form ion-col {
-  padding: 5px;
-}
-
-/* Pour les écrans de iPhone SE */
-@media screen and (max-width: 375px) {
-  ion-col[size="4"] {
-    flex: 0 0 100%;
-    max-width: 100%;
-    margin-bottom: 5px;
-  }
-
-  ion-col[size="6"] {
-    flex: 0 0 100%;
-    max-width: 100%;
-  }
-
-  ion-chip {
-    margin-left: 0;
-    margin-bottom: 1em;
-    justify-content: center;
-  }
-
-  .transactions-section {
-    max-height: 200px;
-  }
-
-  ion-item {
-    padding: 5px;
-  }
-
-  ion-label h3 {
-    font-size: 0.8rem;
-  }
-
-  ion-label p {
-    font-size: 0.5rem;
+    &:active {
+      transform: scale(0.98);
+    }
   }
 }
 
+// Media queries pour les grands écrans
+@media (min-width: 768px) {
+  .action-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
 
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  ion-content {
+    --background: var(--ion-background-color);
+  }
 
-.transaction-list {
-  -webkit-overflow-scrolling: touch;
-  max-height: 150px;
+  .dashboard-section,
+  .charts-section,
+  .recommendations-section,
+  .quick-actions {
+    background: var(--ion-card-background);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .quick-actions h2 {
+    color: var(--ion-color-light);
+  }
 }

@@ -1,0 +1,92 @@
+.splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100000;
+    background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-primary-shade) 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  .splash-content {
+    text-align: center;
+    color: white;
+    padding: 20px;
+    animation: scaleIn 0.5s ease-out;
+  }
+  
+  .logo-container {
+    margin-bottom: 20px;
+    
+    .app-logo {
+      font-size: 80px;
+      animation: pulse 2s infinite;
+    }
+  }
+  
+  .app-name {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+    opacity: 0;
+    animation: slideUp 0.5s ease-out forwards;
+    animation-delay: 0.3s;
+  }
+  
+  .loading-indicator {
+    margin-top: 30px;
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out forwards;
+    animation-delay: 0.6s;
+    
+    ion-spinner {
+      --color: white;
+      transform: scale(1.5);
+    }
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes scaleIn {
+    from {
+      transform: scale(0.9);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.1);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }

@@ -1,0 +1,15 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Exporter les données</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">Fermer</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-button expand="block" (click)="exportToGoogleDrive()">
+    <ion-icon slot="start" name="logo-google"></ion-icon>
+    Exporter vers Google Drive
+  </ion-button>
+</ion-content>

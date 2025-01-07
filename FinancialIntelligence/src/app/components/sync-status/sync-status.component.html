@@ -1,0 +1,15 @@
+<ion-chip [color]="(syncStatus$ | async) === 'synced' ? 'success' : 
+                  (syncStatus$ | async) === 'syncing' ? 'warning' : 'danger'">
+  @if (syncStatus$ | async; as status) {
+    <ion-icon [name]="status === 'synced' ? 'cloud-done' : 
+                     status === 'syncing' ? 'sync' : 'cloud-offline'">
+    </ion-icon>
+    <ion-label>
+      {{ status === 'synced' ? 'Synchronisé' :
+         status === 'syncing' ? 'Synchronisation...' : 'Hors ligne' }}
+    </ion-label>
+  } @else {
+    <ion-spinner name="dots"></ion-spinner>
+    <ion-label>Chargement...</ion-label>
+  }
+</ion-chip>

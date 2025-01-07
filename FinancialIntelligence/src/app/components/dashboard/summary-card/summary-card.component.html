@@ -1,0 +1,39 @@
+<ion-card>
+  <ion-card-header>
+    <ion-card-title>{{ title }}</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-list>
+      <ion-item>
+        <ion-label>Entrées</ion-label>
+        <ion-note slot="end" color="success">
+          {{ data?.income | currency:'EUR' }}
+        </ion-note>
+      </ion-item>
+      <ion-item>
+        <ion-label>Dépenses</ion-label>
+        <ion-note slot="end" color="danger">
+          {{ data?.expense | currency:'EUR' }}
+        </ion-note>
+      </ion-item>
+      <ion-item>
+        <ion-label>Prêts</ion-label>
+        <ion-note slot="end" color="warning">
+          {{ data?.loan | currency:'EUR' }}
+        </ion-note>
+      </ion-item>
+      <ion-item>
+        <ion-label>Crédits</ion-label>
+        <ion-note slot="end" color="primary">
+          {{ data?.credit | currency:'EUR' }}
+        </ion-note>
+      </ion-item>
+      <ion-item>
+        <ion-label>Épargne</ion-label>
+        <ion-note slot="end" color="tertiary">
+          {{ data?.savings | currency:'EUR' }}
+        </ion-note>
+      </ion-item>
+    </ion-list>
+  </ion-card-content>
+</ion-card>

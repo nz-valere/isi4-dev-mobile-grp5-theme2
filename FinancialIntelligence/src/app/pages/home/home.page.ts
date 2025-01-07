@@ -1,44 +1,101 @@
-import { Component, OnInit } from '@angular/core';
-import { TransactionService } from '../../services/transaction/transaction.service';
-import { RecommendationService } from '../../services/recommendation/recommendation.service';
-import { Transaction } from 'src/app/models/transaction.model';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { IonicModule} from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { addIcons } from 'ionicons';
+import { 
+  arrowDownOutline, 
+  arrowUpOutline, 
+  cashOutline, 
+  cardOutline, 
+  saveOutline,
+  walletOutline 
+} from 'ionicons/icons';
+import { FinanceService } from '../../services/finance.service';
+import { ModalService } from '../../services/modal.service';
+import { WeeklyChartComponent } from '../../components/weekly-chart/weekly-chart.component';
+import { DailyChartComponent } from '../../components/daily-chart/daily-chart.component';
+import { ExpenseRecommendationsComponent } from '../../components/expense-recommendations/expense-recommendations.component';
+import { DashboardSummaryComponent } from '../../components/dashboard/dashboard-summary/dashboard-summary.component';
+import { Transaction } from '../../models/transaction.model';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
-    selector: 'app-home',
-    templateUrl: './home.page.html',
-    styleUrls: ['./home.page.scss'],
-    standalone: false
+  selector: 'app-home',
+  templateUrl: './home.page.html',
+  styleUrls: ['./home.page.scss'],
+  standalone: true,
+  imports: [
+    IonicModule,
+    CommonModule,
+    FormsModule,
+    WeeklyChartComponent,
+    DailyChartComponent,
+    ExpenseRecommendationsComponent,
+    DashboardSummaryComponent,
+  ]
 })
-export class HomePage implements OnInit {
-  transactions: Transaction[] = [];
-  totalIncome = 0;
-  totalExpenses = 0;
-  averageExpenses = 0;
-  recommendation = '';
-
+export class HomePage implements OnInit, OnDestroy {
+  selectedSegment = 'dashboard';
+  transactions$: Observable<Transaction[]>;
+  private destroy$ = new Subject<void>();
+  
+  
   constructor(
-    private transactionService: TransactionService,
-    private recommendationService: RecommendationService
-  ) {}
+    private financeService: FinanceService,
+    private modalService: ModalService
+  ) {
+    this.transactions$ = this.financeService.getTransactions();
+    addIcons({
+      'arrow-down': arrowDownOutline,
+      'arrow-up': arrowUpOutline,
+      'cash': cashOutline,
+      'card': cardOutline,
+      'save': saveOutline,
+      'wallet': walletOutline
+    });
+  }
 
-  async ngOnInit() {
-    try {
-      this.transactions = await this.transactionService.getAllTransactions();
-      console.log('Transactions fetched:', this.transactions);
-      await this.fetchSummary();
-    } catch (error) {
-      console.error('Error initializing HomePage:', error);
+  segmentChanged(event: any) {
+    this.selectedSegment = event.detail.value;
+  }
+
+  ngOnInit() {
+    const today = new Date();
+    const isStartOfMonth = today.getDate() <= 5;
+
+    if (isStartOfMonth) {
+      this.transactions$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => {
+          console.log('Transactions chargées au début du mois');
+        });
     }
   }
 
-  async fetchSummary() {
-    try {
-      this.totalIncome = await this.transactionService.calculateTotal('income');
-      this.totalExpenses = await this.transactionService.calculateTotal('expense');
-      this.averageExpenses = await this.transactionService.calculateMonthlyAverage('expense');
-      this.recommendation = this.recommendationService.getMonthlyRecommendation(this.totalExpenses);
-    } catch (error) {
-      console.error('Error fetching summary:', error);
-    }
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  async addIncome() {
+    await this.modalService.showTransactionModal('INCOME', 'Nouvelle entrée');
+  }
+
+  async addExpense() {
+    await this.modalService.showTransactionModal('EXPENSE', 'Nouvelle dépense');
+  }
+
+  async addLoan() {
+    await this.modalService.showTransactionModal('LOAN', 'Nouveau prêt');
+  }
+
+  async addCredit() {
+    await this.modalService.showTransactionModal('CREDIT', 'Nouveau crédit');
+  }
+
+  async addSavings() {
+    await this.modalService.showTransactionModal('SAVINGS', 'Nouvelle épargne');
   }
 }
