@@ -7,6 +7,8 @@ import { FinanceService } from '../../services/finance.service';
 import { formatDayDate } from '../../utils/date.utils';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+// import 'chartjs-adapter-date-fns';
+
 
 // Assurez-vous d'importer l'adaptateur de date
 import 'chartjs-adapter-date-fns';

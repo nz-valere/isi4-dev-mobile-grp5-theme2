@@ -1,71 +1,71 @@
 /* Styles pour le menu latéral */
 ion-menu {
-    --width: 280px;
-    
-    ion-content {
-      --background: var(--ion-background-color);
-    }
+  --width: 280px;
   
-    ion-list {
-      background: transparent;
-      padding: 0;
-    }
-  
-    ion-item {
-      --background: transparent;
-      --background-hover: var(--ion-color-light);
-      --min-height: 50px;
-      
-      ion-icon {
-        color: var(--ion-color-medium);
-        margin-right: 16px;
-      }
-    }
-  }
-  
-  /* Styles pour la barre de navigation inférieure */
-  ion-tab-bar {
+  ion-content {
     --background: var(--ion-background-color);
-    border-radius: 16px 16px 0 0;
-    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
-    padding: 8px 0;
-    height: 65px;
-  
-    ion-tab-button {
-      --color: var(--ion-color-medium);
-      --color-selected: var(--ion-color-primary);
-      
-      ion-icon {
-        font-size: 24px;
-      }
-      
-      ion-label {
-        font-size: 12px;
-        font-weight: 500;
-      }
+  }
+
+  ion-list {
+    background: transparent;
+    padding: 0;
+  }
+
+  ion-item {
+    --background: transparent;
+    --background-hover: var(--ion-color-light);
+    --min-height: 50px;
+    
+    ion-icon {
+      color: var(--ion-color-medium);
+      margin-right: 16px;
     }
   }
-  
-  /* Styles pour le bouton d'ajout */
-  ion-fab-button {
-    --background: var(--ion-color-primary);
-    --background-activated: var(--ion-color-primary-shade);
-    margin: -20px 0;
-    width: 56px;
-    height: 56px;
+}
+
+/* Styles pour la barre de navigation inférieure */
+ion-tab-bar {
+  --background: var(--ion-background-color);
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+  padding: 8px 0;
+  height: 65px;
+
+  ion-tab-button {
+    --color: var(--ion-color-medium);
+    --color-selected: var(--ion-color-primary);
     
     ion-icon {
       font-size: 24px;
     }
+    
+    ion-label {
+      font-size: 12px;
+      font-weight: 500;
+    }
+  }
+}
+
+/* Styles pour le bouton d'ajout */
+ion-fab-button {
+  --background: var(--ion-color-primary);
+  --background-activated: var(--ion-color-primary-shade);
+  margin: -20px 0;
+  width: 56px;
+  height: 56px;
+  
+  ion-icon {
+    font-size: 24px;
+  }
+}
+
+/* Ajustements pour le mode tablette/desktop */
+@media (min-width: 768px) {
+  ion-split-pane {
+    --side-width: 280px;
   }
   
-  /* Ajustements pour le mode tablette/desktop */
-  @media (min-width: 768px) {
-    ion-split-pane {
-      --side-width: 280px;
-    }
-    
-    ion-footer {
-      display: none;
-    }
+  ion-footer {
+    display: none;
   }
+}

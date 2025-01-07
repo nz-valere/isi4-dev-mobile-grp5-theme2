@@ -6,7 +6,7 @@ export const routes: Routes = [
     path: '',
     component: HomePage
   },
-  // Redirection pour toutes les autres routes non définies
+  
   {
     path: '**',
     component: HomePage
